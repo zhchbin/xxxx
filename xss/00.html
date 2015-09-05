@@ -6,10 +6,15 @@
   <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 
   <script>
+  // 作用：将字符串中的链接替换成带a标签可以给用户点击的超链接。例如：
+  //   输入是 "comment with link: http://www.xx.com/"，
+  //   输出是 "comment with link: <a href=\'http://www.xx.com/\'>http://www.xx.com/</a>"
+  // 然而：
+  //   encodeURI函数并不会过滤单引号，所以就被XSS了。
   String.prototype.parseLinks = function() {
     return this.replace(/(https?:)(\/\/([^\/?#\s\r\n]*))([^?#\s\r\n]*)(\?([^#\s\r\n]*))?(#([^\s\r\n]*))?/gi,
       function(link) {
-        return "<a class=\'hover\' target=\'_blank\' href=\'" + encodeURI(link) + "\'>" + link.htmlEncode() + "</a>";
+        return "<a href=\'" + encodeURI(link) + "\'>" + link.htmlEncode() + "</a>";
       }
     );
   }
@@ -18,10 +23,11 @@
     return this.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
   
+  // POC
   $(function() {
     var data = "http://baidu.com/'onmouseover=alert(1);//";
     data = data.parseLinks();
     $(data).appendTo($('#test'));
-  })
+  });
   </script>
 </html>
