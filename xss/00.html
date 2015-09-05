@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="test"></div>
+  </body>
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+  <script>
+  String.prototype.parseLinks = function() {
+    return this.replace(/(https?:)(\/\/([^\/?#\s\r\n]*))([^?#\s\r\n]*)(\?([^#\s\r\n]*))?(#([^\s\r\n]*))?/gi,
+      function(link) {
+        return "<a class=\'hover\' target=\'_blank\' href=\'" + encodeURI(link) + "\'>" + link.htmlEncode() + "</a>";
+      }
+    );
+  }
+  
+  String.prototype.htmlEncode = function() {
+    return this.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  
+  $(function() {
+    var data = "http://baidu.com/'onmouseover=alert(1);//";
+    data = data.parseLinks();
+    $(data).appendTo($('#test'));
+  })
+  </script>
+</html>
