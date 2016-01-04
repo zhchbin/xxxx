@@ -4,4 +4,4 @@
 
 
 ### TODO
-- [ ] 批量下载robots.txt及crossdomain.xml的工具
+- [x] 批量下载crossdomain.xml的工具
