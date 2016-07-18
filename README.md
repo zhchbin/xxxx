@@ -15,6 +15,7 @@
 * [批量下载crossdomain.xml的脚本](tools/hunt.py)
 * [从Burp Suite生成的请求文件生成CSRF表单](tools/generate_csrf_form.py)
 * [Google搜索找URL跳转XSS](tools/xss_via_redirect.py)
+    
     ```bash
     $ python xss_via_redirect.py edu.cn
     [INFO] Searching links
