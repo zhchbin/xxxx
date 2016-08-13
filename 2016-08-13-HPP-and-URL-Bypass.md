@@ -20,8 +20,8 @@ Input:
 ```
 https://attacker.com%ff@www.periscope.tv
 --------\  authority   /\   hostname   /
-The URL is parsed and passes the validation because the hostname matches the registered domain.
 ```
+The URL is parsed and passes the validation because the hostname matches the registered domain.
 
 Output:
 ```
