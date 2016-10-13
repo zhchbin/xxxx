@@ -64,3 +64,5 @@ Web服务还是能恢复的。但是，在后续尝试的过程中发现，如�
 ```
 
 发现原来是uwsgi在启动子进程前，`MongoClient`就已经创建，而文档中要求这种情况下需要使用`connect=False`选项，然而Flask-MongoEngine并没有处理这个配置。https://github.com/MongoEngine/flask-mongoengine/issues/266 这就是坑。
+
+另外一个方式：让uwsgi的子进程创建MongoClient而不是加载好app之后再fork进程，uwsgi启动选项：[lazy-apps](http://uwsgi-docs.readthedocs.io/en/latest/Options.html#lazy-apps)，增加了应用的启动时间。
