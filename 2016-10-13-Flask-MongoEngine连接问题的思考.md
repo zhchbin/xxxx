@@ -56,3 +56,11 @@ mongod  4103  mongodb   16u  IPv4  24746      0t0  TCP flask-app.dev.env:27017->
 Web服务还是能恢复的。但是，在后续尝试的过程中发现，如果在有持续访问的情况下，连接状态会进入`CLOSE_WAIT`状态，并且很难重新连接上，HTTP请求大量504，重启uwsgi进程才能恢复回正常。
 
 另外，补充一个连接池的文档：http://api.mongodb.com/python/current/faq.html#how-does-connection-pooling-work-in-pymongo
+
+尝试解决这个问题，发现是uwsgi的日志中存在以下信息：
+```
+/home/vagrant/env/local/lib/python2.7/site-packages/pymongo/topology.py:143: UserWarning: MongoClient opened before fork. Create MongoClient with connect=False, or create client after forking. See PyMongo's documentation for details: http://api.mongodb.org/python/current/faq.html#using-pymongo-with-multiprocessing>
+  "MongoClient opened before fork. Create MongoClient "
+```
+
+发现原来是uwsgi在启动子进程前，`MongoClient`就已经创建，而文档中要求这种情况下需要使用`connect=False`选项，然而Flask-MongoEngine并没有处理这个配置。https://github.com/MongoEngine/flask-mongoengine/issues/266 这就是坑。
